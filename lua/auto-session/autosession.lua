@@ -56,8 +56,9 @@ local function pre_save()
     require "toggleterm".toggle_all()
   end
   if should_restore_mark then replace_termcodes(tabpagenr.."gt`T") end
-  -- Doesn't autosave after VimLeave.
-  vim.cmd(":wshada")
+  -- Doesn't autosave after VimLeave. :wshada without
+  -- forced write frequently fails.
+  vim.cmd(":wshada!")
 end
 
 local function post_restore()
