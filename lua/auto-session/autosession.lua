@@ -11,9 +11,16 @@ local function neotree_toggle()
         action = 'show',
         reveal_force_cwd = true,
       }
-    -- The termcode has no effect unless preceded by a wait.
-    vim.wait(0)
-    replace_termcodes("<C-w>=", false)
+    local timer = vim.loop.new_timer()
+    -- Timer is necessary because neo-tree must execute
+    -- autocommands or async code before the command has
+    -- full effect.
+    timer:start(100, 0, vim.schedule_wrap(function()
+      replace_termcodes("<C-w>=<C-w>w", false)
+      timer:start(100, 0, vim.schedule_wrap(function()
+        replace_termcodes("<C-w>w<C-w>w", false)
+      end))
+    end))
   end
 end
 
