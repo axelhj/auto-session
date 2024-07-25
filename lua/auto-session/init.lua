@@ -78,13 +78,13 @@ function M.setup(opts)
       pre_save_hook_combined,
       post_restore_hook_combined
     )
-  else
-    create_usercommands(
-      session_file_path,
-      pre_save_hook_combined,
-      post_restore_hook_combined
-    )
+    return
   end
+  create_usercommands(
+    session_file_path,
+    pre_save_hook_combined,
+    post_restore_hook_combined
+  )
   if enable_on_leave_autocmd then
     enable_autocommand(
       "leave",
