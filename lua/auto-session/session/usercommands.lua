@@ -7,6 +7,18 @@ local save_and_quit_command_name = "SaveSessionAndQuitNeovim"
 local save_command_name = "SaveSession"
 local restore_command_name = "RestoreSession"
 
+local function get_restore_session_fn(save_path, post_restore_hook)
+  return function(options)
+    vim.cmd"silent! tabdo tabclose"
+    vim.cmd"silent! windo wincmd c"
+    vim.cmd(options.bang and "silent! bufdo bd!" or "silent! bufdo bd")
+    restore(options.args and
+      options.args[1] or save_path
+    )
+    post_restore_hook()
+  end
+end
+
 function M.create_usercommands(save_path, pre_save_hook, post_restore_hook)
   vim.api.nvim_create_user_command(
     save_and_quit_command_name,
@@ -40,19 +52,46 @@ function M.create_usercommands(save_path, pre_save_hook, post_restore_hook)
   )
   vim.api.nvim_create_user_command(
     restore_command_name,
-    function(options)
-      vim.cmd"silent! tabdo tabclose"
-      vim.cmd"silent! windo wincmd c"
-      vim.cmd(options.bang and "silent! bufdo bd!" or "silent! bufdo bd")
-      restore(options.args and
-        options.args[1] or save_path
-      )
-      post_restore_hook()
-    end,
+    get_restore_session_fn(save_path, post_restore_hook),
     {
       nargs = "?",
       bang = true,
       desc = "Restore session (source session-file)"
+    }
+  )
+end
+
+function M.create_no_save_usercommands(save_path, pre_save_hook, post_restore_hook)
+  vim.api.nvim_create_user_command(
+    save_and_quit_command_name,
+    function(options)
+      vim.cmd(options.bang and "qa!" or "qa")
+    end, {
+      nargs = "?",
+      bang = true,
+      desc = "Quit nvim - noop session (wa*)"
+    }
+  )
+  vim.api.nvim_create_user_command(
+    save_command_name,
+    function(options) end,
+    {
+      nargs = "?",
+      bang = true,
+      desc = "Noop session (wa*)"
+    }
+  )
+  vim.api.nvim_create_user_command(
+    restore_command_name,
+    function(options)
+      M.clear_usercommands()
+      M.create_usercommands(save_path, pre_save_hook, post_restore_hook)
+      get_restore_session_fn(save_path, post_restore_hook)(options)
+    end,
+    {
+      nargs = "?",
+      bang = true,
+      desc = "Restore session and enable saving (source session-file)"
     }
   )
 end

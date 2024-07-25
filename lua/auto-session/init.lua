@@ -6,6 +6,8 @@ local enable_autocommand = require"auto-session.session.autocommands".enable_aut
 
 local create_usercommands = require("auto-session.session.usercommands").create_usercommands
 
+local create_no_save_usercommands = require("auto-session.session.usercommands").create_no_save_usercommands
+
 local pre_save_hook = require"auto-session.session.defaulthooks".pre_save_hook
 
 local post_restore_hook = require"auto-session.session.defaulthooks".post_restore_hook
@@ -35,9 +37,6 @@ function M.setup(opts)
   local block_filenames = (
     opts ~= nil and opts.block_filenames
   ) or default_blocked_filenames
-  if is_plugin_blocked(block_filetypes, block_filenames) then
-    return
-  end
   -- Pre-req for the mksession command.
   vim.o.sessionoptions = (
     opts ~= nil and opts.sessionoptions
@@ -73,11 +72,19 @@ function M.setup(opts)
       opts.post_restore_hook(neotree_state_variable_name)
     end
   end
-  create_usercommands(
-    session_file_path,
-    pre_save_hook_combined,
-    post_restore_hook_combined
-  )
+  if is_plugin_blocked(block_filetypes, block_filenames) then
+    create_no_save_usercommands(
+      session_file_path,
+      pre_save_hook_combined,
+      post_restore_hook_combined
+    )
+  else
+    create_usercommands(
+      session_file_path,
+      pre_save_hook_combined,
+      post_restore_hook_combined
+    )
+  end
   if enable_on_leave_autocmd then
     enable_autocommand(
       "leave",
