@@ -23,8 +23,9 @@ function M.pre_save_hook(state_variable_name)
     require "toggleterm".toggle_all()
   end
   if should_restore_mark then replace_termcodes(tabpagenr.."gt`T") end
-  -- Shada seem to not be auto-written after VimLeave.
-  vim.cmd(":wshada")
+  -- Doesn't autosave after VimLeave. :wshada without
+  -- forced write frequently fails.
+  vim.cmd(":wshada!")
 end
 
 function M.post_restore_hook(state_variable_name)

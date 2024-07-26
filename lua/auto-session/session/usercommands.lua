@@ -27,7 +27,7 @@ function M.create_usercommands(save_path, pre_save_hook, post_restore_hook)
       save(options.args and
         options.args[1] or save_path
       )
-      vim.cmd"wshada"
+      vim.cmd"wshada!"
       vim.cmd(options.bang and "qa!" or "qa")
     end, {
       nargs = "?",
@@ -42,7 +42,7 @@ function M.create_usercommands(save_path, pre_save_hook, post_restore_hook)
       save(options.args and
         options.args[1] or save_path
       )
-      vim.cmd"wshada"
+      vim.cmd"wshada!"
     end,
     {
       nargs = "?",
