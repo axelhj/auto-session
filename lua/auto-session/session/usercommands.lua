@@ -6,6 +6,7 @@ local restore = require("auto-session.session.restore").restore
 local save_and_quit_command_name = "SaveSessionAndQuitNeovim"
 local save_command_name = "SaveSession"
 local restore_command_name = "RestoreSession"
+local restore_conditional_command_name = "RestoreSessionConditional"
 
 local function get_restore_session_fn(save_path, post_restore_hook)
   return function(options)
@@ -19,7 +20,7 @@ local function get_restore_session_fn(save_path, post_restore_hook)
   end
 end
 
-function M.create_usercommands(save_path, pre_save_hook, post_restore_hook)
+function M.create_usercommands(save_path, pre_save_hook, post_restore_hook, is_loading_blocked)
   vim.api.nvim_create_user_command(
     save_and_quit_command_name,
     function(options)
@@ -59,6 +60,18 @@ function M.create_usercommands(save_path, pre_save_hook, post_restore_hook)
       desc = "Restore session (source session-file)"
     }
   )
+  vim.api.nvim_create_user_command(
+    restore_conditional_command_name,
+    is_loading_blocked and function() end or get_restore_session_fn(save_path, post_restore_hook),
+    {
+      nargs = "?",
+      bang = true,
+      desc =
+        "Restore session contingent on whether the autocommand "..
+        "would have restored the session (source session-file)"
+    }
+  )
+
 end
 
 function M.create_no_save_usercommands(save_path, pre_save_hook, post_restore_hook)

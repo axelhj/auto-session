@@ -72,7 +72,14 @@ function M.setup(opts)
       opts.post_restore_hook(neotree_state_variable_name)
     end
   end
-  if is_plugin_blocked(block_filetypes, block_filenames) then
+  local is_plugin_blocked_value = is_plugin_blocked(block_filetypes, block_filenames)
+  create_usercommands(
+    session_file_path,
+    pre_save_hook_combined,
+    post_restore_hook_combined,
+    is_plugin_blocked_value
+  )
+  if is_plugin_blocked_value then
     create_no_save_usercommands(
       session_file_path,
       pre_save_hook_combined,
@@ -80,11 +87,6 @@ function M.setup(opts)
     )
     return
   end
-  create_usercommands(
-    session_file_path,
-    pre_save_hook_combined,
-    post_restore_hook_combined
-  )
   if enable_on_leave_autocmd then
     enable_autocommand(
       "leave",
