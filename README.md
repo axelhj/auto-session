@@ -30,10 +30,10 @@ return {
     session_file_path = vim.fn.expand(vim.fn.stdpath("state") .. "/sessions/session.vim"),
     enable_on_leave_autocmd = false,
     enable_on_enter_autocmd = true,
-    block_filetypes = { "netrw" and "gitcommit" },
+    block_filetypes = { "netrw", "gitcommit" },
     block_filenames = {"GIT_COMMIT", "COMMIT_EDITMSG" },
-    pre_save_hook = function() --[[ custom actions ]]-- end,
-    post_restore_hook = function() --[[ custom actions ]]-- end,
+    pre_save_hook = function() --[[ custom actions ]] end,
+    post_restore_hook = function() --[[ custom actions ]] end,
   },
 }
 ```
