@@ -68,7 +68,7 @@ The block_filetypes or block_filesnames-options have sort of the same raison d'Ã
 
 ### Hooks
 
-- Before saving, a hook is executed that makes sure that for each tab-page any toggleterm-terminals are closed. A mark is set and restored such that closing a toggle-term buffer in vim-tab N+1 restores the current tab to N after closing toggle-term so that the same tab as was last opened when invoking eg. `:qa` is the one that Neovim presents when neovim is opened anew. A global value is persisted through SHADA. It has th name `NEOTREE_LAST_OPENED`. It will be set to one before closing Neotree if neotree is opened in the current buffer.
+- Before saving, a hook is executed that makes sure that for each tab-page any toggleterm-terminals are closed. A mark is set and restored such that closing a toggle-term buffer in vim-tab N+1 restores the current tab to N after closing toggle-term so that the same tab as was last opened when invoking eg. `:qa` is the one that Neovim presents when neovim is opened anew. A global value is persisted through SHADA. It has th name `NEOTREE_LAST_OPENED`. It will be set to one before closing Neotree if neotree is opened in the current tab.
 
 - After loading the session state, a hook is executed that will open Neotree if `NEOTREE_LAST_OPENED` has the value 1. If/when Neotree is set to follow the cwd and vim-rooter is used, the previously edited file will be focused in the Neotree automatically and therefore it is not within the scope of this plugin to restore any Neotree session even if it might be possible.
 
